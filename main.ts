@@ -1,8 +1,19 @@
 import { Context, Telegraf } from "telegraf";
+import * as dotenv from "dotenv";
 
-const BOT_TOKEN = "7665808766:AAGgaLn6fr-mNJ0zEy7i6-LKQn_vlYIUtzM";
-const OPEN_WEATHER_MAP_API = "c580f3a206d96aa35f9969b28f72ef6b";
-const bot = new Telegraf(BOT_TOKEN);
+dotenv.config();
+
+interface Env {
+  BOT_TOKEN: string;
+  OPEN_WEATHER_MAP_API: string;
+}
+
+const env: Env = {
+  BOT_TOKEN: process.env.BOT_TOKEN || "",
+  OPEN_WEATHER_MAP_API: process.env.OPEN_WEATHER_MAP_API || "",
+};
+
+const bot = new Telegraf(env.BOT_TOKEN);
 
 const startHandler = async (ctx: Context) => {
   ctx.reply(
@@ -20,7 +31,7 @@ const getWeatherHandler = async (ctx: Context) => {
   const message = await ctx.message?.text;
   if (message[0] != "/") {
     const fetchWeatherInfo = await fetch(
-      `https://api.openweathermap.org/data/2.5/weather?units=metric&q=${message}&appid=${OPEN_WEATHER_MAP_API}`
+      `https://api.openweathermap.org/data/2.5/weather?units=metric&q=${message}&appid=${env.OPEN_WEATHER_MAP_API}`
     );
     if (fetchWeatherInfo.ok) {
       const weatherInfo = await fetchWeatherInfo.json();
